@@ -4,7 +4,8 @@
 % 
 
 -module(cost).
--export([estimate_profit/1
+-export([estimate_profit/1,
+		appts_proportion_fits/1
 		]).
 
 
@@ -41,5 +42,11 @@
 
 
 estimate_profit(Plan) -> 0.
+
+
+
+appts_proportion_fits(Floors) -> true.
+
+
 
 
