@@ -8,16 +8,17 @@
 
 
 metropolis(X,Y,N) -> 
-	InitPlan = gen:init_plan(X,Y),
+	InitPlan = generate:init_plan(X,Y),
 	Profit = cost:estimate_profit(InitPlan),
 	metropolis(X,Y,N-1,[{Profit,InitPlan}]).
 
 metropolis(_X,_Y,0,Accepted) -> Accepted;
 metropolis(X,Y,N,[{LastProfit,LastPlan}|_]=Accepted) -> 
-	NewPlan = gen:modify_plan(X,Y,LastPlan),
+	NewPlan = generate:modify_plan(X,Y,LastPlan),
 	NewProfit = cost:estimate_profit(NewPlan),
+	io:format("new plan: ~p~n",[NewProfit]),
 
-	case Delta = NewProfit - LastProfit > 0 of
+	case (Delta = NewProfit - LastProfit) >= 0.0 of
 		true -> metropolis(X,Y,N-1,[{NewProfit,NewPlan}|Accepted]);
 		false->
 			case utils:coin(math:exp(Delta/1000)) of
