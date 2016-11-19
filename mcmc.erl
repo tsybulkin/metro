@@ -20,7 +20,7 @@ metropolis(X,Y,N,[{LastProfit,LastPlan}|_]=Accepted) ->
 	case Delta = NewProfit - LastProfit > 0 of
 		true -> metropolis(X,Y,N-1,[{NewProfit,NewPlan}|Accepted]);
 		false->
-			case utils:coin(math:exp(Delta/1000.)) of
+			case utils:coin(math:exp(Delta/1000)) of
 				true -> metropolis(X,Y,N-1,[{NewProfit,NewPlan}|Accepted]);
 				false-> metropolis(X,Y,N-1,Accepted)
 			end
