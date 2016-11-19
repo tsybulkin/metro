@@ -16,8 +16,7 @@ metropolis(_X,_Y,0,Accepted) -> Accepted;
 metropolis(X,Y,N,[{LastProfit,LastPlan}|_]=Accepted) -> 
 	NewPlan = generate:modify_plan(X,Y,LastPlan),
 	NewProfit = cost:estimate_profit(NewPlan),
-	io:format("new plan: ~p~n",[NewProfit]),
-
+	
 	case (Delta = NewProfit - LastProfit) >= 0.0 of
 		true -> metropolis(X,Y,N-1,[{NewProfit,NewPlan}|Accepted]);
 		false->
