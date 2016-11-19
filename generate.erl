@@ -22,7 +22,7 @@
 -define(MIN_LIVINGROOM, 150).
 -define(MIN_KITCHEN, 60).
 -define(MIN_BATHROOM, 48).
-
+-define(MIN_APPT_SIZE, ?MIN_BATHROOM + ?MIN_KITCHEN + ?MIN_LIVINGROOM).
 
 
 %%%%%%%%%%%%%%%%% Plan structure %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,16 +70,72 @@ sample_floors(Area,Floors_nbr) ->
 generate_floor(Area) ->  generate_floor(Area,[]).
 
 generate_floor(Area, Appts) ->
-	MIN_APPT_SIZE = ?MIN_BATHROOM + ?MIN_KITCHEN + ?MIN_LIVINGROOM,
-	case Area < 2 * MIN_APPT_SIZE of
+	case Area < 2 * ?MIN_APPT_SIZE of
 		true -> [generate_appt(Area) | Appts];
 		false->
-			Appt_area = rand:uniform(MIN_APPT_SIZE, ?MAX_APPT_SIZE - MIN_APPT_SIZE),
+			Appt_area = ?MIN_APPT_SIZE + rand:uniform(?MAX_APPT_SIZE - 2*?MIN_APPT_SIZE),
 			generate_floor(Area-Appt_area, [generate_appt(Appt_area) | Appts])
 	end.
 
 
 
 
-generate_appt(Area) -> {?MIN_KITCHEN, ?MIN_LIVINGROOM, ?MIN_BATHROOM, []}.
+generate_appt(Area) when Area < ?MIN_APPT_SIZE + ?MIN_BEDROOM -> generate_studio(Area);
+generate_appt(Area) when Area < ?MIN_APPT_SIZE + 2*?MIN_BEDROOM -> 
+	case utils:coin(0.5) of
+		true -> generate_studio(Area);
+		false-> generate_one_bd(Area)
+	end;
+generate_appt(Area) when Area < ?MIN_APPT_SIZE + 3*?MIN_BEDROOM -> 
+	case utils:coin(0.3) of
+		true -> generate_studio(Area);
+		false-> 
+			case utils:coin(0.3) of
+				true -> generate_one_bd(Area);
+				false-> generate_two_bd(Area)
+			end
+	end;
+generate_appt(Area) -> 
+	case utils:coin(0.2) of
+		true -> generate_studio(Area);
+		false-> 
+			case utils:coin(0.2) of
+				true -> generate_one_bd(Area);
+				false-> 
+					case utils:coin(0.3) of
+						true -> generate_two_bd(Area);
+						false-> generate_three_bd(Area)
+					end
+			end
+	end.
+
+
+
+generate_studio(Area) ->
+	Kitchen_size = ?MIN_KITCHEN + abs(rand:normal())*?MIN_KITCHEN,
+	Bathroom_size = ?MIN_BATHROOM + abs(rand:normal())*?MIN_BATHROOM,
+	Livingroom_size = Area - Kitchen_size - Bathroom_size,
+	case Livingroom_size >= ?MIN_LIVINGROOM of
+		true -> {Kitchen_size, Bathroom_size, Livingroom_size, []};
+		false-> generate_studio(Area)
+	end.
+
+generate_one_bd(Area) -> generate_studio(Area).
+
+
+generate_two_bd(Area) -> generate_studio(Area).
+
+
+generate_three_bd(Area) -> generate_studio(Area).
+
+
+
+
+
+
+
+
+
+
+
 
