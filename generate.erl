@@ -65,7 +65,7 @@ sample_floors(Area,Floors_nbr) ->
 	case cost:appts_proportion_fits(Floors) of
 		true -> Floors;
 		false-> 
-			io:format("appartments proportion in the building violates constrains~n"),
+			%io:format("appartments proportion in the building violates constrains~n"),
 			sample_floors(Area,Floors_nbr)
 	end.
 
@@ -89,22 +89,22 @@ generate_appt(Area) when Area =< ?MIN_APPT_SIZE + 2*?MIN_BEDROOM ->
 		false-> generate_one_bd(Area,?ATTEMPTS)
 	end;
 generate_appt(Area) when Area =< ?MIN_APPT_SIZE + 3*?MIN_BEDROOM -> 
-	case utils:coin(0.3) of
+	case utils:coin(0.2) of
 		true -> generate_studio(Area,?ATTEMPTS);
 		false-> 
-			case utils:coin(0.3) of
+			case utils:coin(0.4) of
 				true -> generate_one_bd(Area,?ATTEMPTS);
 				false-> generate_two_bd(Area,?ATTEMPTS)
 			end
 	end;
 generate_appt(Area) -> 
-	case utils:coin(0.2) of
+	case utils:coin(0.1) of
 		true -> generate_studio(Area,?ATTEMPTS);
 		false-> 
 			case utils:coin(0.2) of
 				true -> generate_one_bd(Area,?ATTEMPTS);
 				false-> 
-					case utils:coin(0.3) of
+					case utils:coin(0.6) of
 						true -> generate_two_bd(Area,?ATTEMPTS);
 						false-> generate_three_bd(Area,?ATTEMPTS)
 					end
@@ -122,7 +122,7 @@ generate_studio(Area,N) ->
 	case Livingroom_size >= ?MIN_LIVINGROOM of
 		true -> {Kitchen_size, Bathroom_size, Livingroom_size, []};
 		false-> 
-			io:format("failed to generate studio. Area: ~p~n",[Area]), 
+			%io:format("failed to generate studio. Area: ~p~n",[Area]), 
 			generate_studio(Area,N-1)
 	end.
 
@@ -137,7 +137,7 @@ generate_one_bd(Area,N) ->
 	case Livingroom_size >= ?MIN_LIVINGROOM of
 		true -> {Kitchen_size, Bathroom_size, Livingroom_size, [Bedroom_size]};
 		false-> 
-			io:format("failed to generate 1-bd appt. Area: ~p~n",[Area]), 
+			%io:format("failed to generate 1-bd appt. Area: ~p~n",[Area]), 
 			generate_one_bd(Area,N-1)
 	end.
 
@@ -154,7 +154,7 @@ generate_two_bd(Area,N) ->
 	case Livingroom_size >= ?MIN_LIVINGROOM of
 		true -> {Kitchen_size, Bathroom_size, Livingroom_size, [Bedroom_size1, Bedroom_size2]};
 		false-> 
-			io:format("failed to generate 2-bd appt. Area: ~p~n",[Area]), 
+			%io:format("failed to generate 2-bd appt. Area: ~p~n",[Area]), 
 			generate_two_bd(Area,N-1)
 	end.
 
