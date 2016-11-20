@@ -31,7 +31,7 @@
 % Lift:  true/false
 % Floor_area: the area of one floor in sq ft
 % Floors = [Floor|_]; 
-% Floor = [{Kitchen_size,Livingroom_size,Bathroom_size,Bedroom_sizes}|Appartments]
+% Floor = [{Kitchen_size,Bathroom_size,Livingroom_size,Bedroom_sizes}|Appartments]
 %
 
 init_plan(X,Y) -> 
@@ -44,7 +44,7 @@ init_plan(X,Y) ->
 
 
 
-modify_plan(X,Y,Plan) -> Plan.
+modify_plan(X,Y,Plan) -> init_plan(X,Y).
 
 
 
@@ -71,7 +71,7 @@ sample_floors(Area,Floors_nbr) ->
 generate_floor(Area) -> generate_floor(Area,[]).
 
 generate_floor(Area, Appts) ->
-	Appt_area = ?MIN_APPT_SIZE * ( abs(rand:normal()) + 1 ),			
+	Appt_area = round(?MIN_APPT_SIZE * ( abs(rand:normal()) + 1 )),			
 	if 
 		Area - Appt_area =< ?MIN_APPT_SIZE -> [generate_appt(Area) | Appts];
 		true -> generate_floor(Area-Appt_area, [generate_appt(Appt_area) | Appts])
@@ -113,8 +113,8 @@ generate_studio(Area,0) ->
 	LR = Area - ?MIN_KITCHEN - ?MIN_BATHROOM,
 	{?MIN_KITCHEN,?MIN_BATHROOM,LR,[]};
 generate_studio(Area,N) ->
-	Kitchen_size = ?MIN_KITCHEN + abs(rand:normal())*?MIN_KITCHEN/5,
-	Bathroom_size = ?MIN_BATHROOM + abs(rand:normal())*?MIN_BATHROOM/5,
+	Kitchen_size = round(?MIN_KITCHEN + abs(rand:normal())*?MIN_KITCHEN/5),
+	Bathroom_size = round(?MIN_BATHROOM + abs(rand:normal())*?MIN_BATHROOM/5),
 	Livingroom_size = Area - Kitchen_size - Bathroom_size,
 	case Livingroom_size >= ?MIN_LIVINGROOM of
 		true -> {Kitchen_size, Bathroom_size, Livingroom_size, []};
@@ -127,9 +127,9 @@ generate_one_bd(Area,0) ->
 	LR = Area - ?MIN_KITCHEN - ?MIN_BATHROOM - ?MIN_BEDROOM,
 	{?MIN_KITCHEN,?MIN_BATHROOM,LR,[?MIN_BEDROOM]};
 generate_one_bd(Area,N) ->
-	Kitchen_size = ?MIN_KITCHEN + abs(rand:normal())*?MIN_KITCHEN/5,
-	Bathroom_size = ?MIN_BATHROOM + abs(rand:normal())*?MIN_BATHROOM/5,
-	Bedroom_size = ?MIN_BEDROOM +abs(rand:normal())*?MIN_BEDROOM/5,
+	Kitchen_size = round(?MIN_KITCHEN + abs(rand:normal())*?MIN_KITCHEN/5),
+	Bathroom_size = round(?MIN_BATHROOM + abs(rand:normal())*?MIN_BATHROOM/5),
+	Bedroom_size = round(?MIN_BEDROOM +abs(rand:normal())*?MIN_BEDROOM/5),
 	Livingroom_size = Area - Kitchen_size - Bathroom_size - Bedroom_size,
 	case Livingroom_size >= ?MIN_LIVINGROOM of
 		true -> {Kitchen_size, Bathroom_size, Livingroom_size, [Bedroom_size]};
@@ -143,10 +143,10 @@ generate_two_bd(Area,0) ->
 	LR = Area - ?MIN_KITCHEN - ?MIN_BATHROOM - 2*?MIN_BEDROOM,
 	{?MIN_KITCHEN,?MIN_BATHROOM,LR,[?MIN_BEDROOM,?MIN_BEDROOM]};
 generate_two_bd(Area,N) ->
-	Kitchen_size = ?MIN_KITCHEN + abs(rand:normal())*?MIN_KITCHEN/5,
-	Bathroom_size = ?MIN_BATHROOM + abs(rand:normal())*?MIN_BATHROOM/5,
-	Bedroom_size1 = ?MIN_BEDROOM + abs(rand:normal())*?MIN_BEDROOM/5,
-	Bedroom_size2 = ?MIN_BEDROOM + abs(rand:normal())*?MIN_BEDROOM/5,
+	Kitchen_size = round(?MIN_KITCHEN + abs(rand:normal())*?MIN_KITCHEN/5),
+	Bathroom_size = round(?MIN_BATHROOM + abs(rand:normal())*?MIN_BATHROOM/5),
+	Bedroom_size1 = round(?MIN_BEDROOM + abs(rand:normal())*?MIN_BEDROOM/5),
+	Bedroom_size2 = round(?MIN_BEDROOM + abs(rand:normal())*?MIN_BEDROOM/5),
 	Livingroom_size = Area - Kitchen_size - Bathroom_size - Bedroom_size1 - Bedroom_size2,
 	case Livingroom_size >= ?MIN_LIVINGROOM of
 		true -> {Kitchen_size, Bathroom_size, Livingroom_size, [Bedroom_size1, Bedroom_size2]};
@@ -161,11 +161,11 @@ generate_three_bd(Area,0) ->
 	LR = Area - ?MIN_KITCHEN - ?MIN_BATHROOM - 3*?MIN_BEDROOM,
 	{?MIN_KITCHEN,?MIN_BATHROOM,LR,[?MIN_BEDROOM,?MIN_BEDROOM,?MIN_BEDROOM]};
 generate_three_bd(Area,N) ->
-	Kitchen_size = ?MIN_KITCHEN + abs(rand:normal())*?MIN_KITCHEN/5,
-	Bathroom_size = ?MIN_BATHROOM + abs(rand:normal())*?MIN_BATHROOM/5,
-	Bedroom_size1 = ?MIN_BEDROOM +abs(rand:normal())*?MIN_BEDROOM/5,
-	Bedroom_size2 = ?MIN_BEDROOM +abs(rand:normal())*?MIN_BEDROOM/5,
-	Bedroom_size3 = ?MIN_BEDROOM +abs(rand:normal())*?MIN_BEDROOM/5,
+	Kitchen_size = round(?MIN_KITCHEN + abs(rand:normal())*?MIN_KITCHEN/5),
+	Bathroom_size = round(?MIN_BATHROOM + abs(rand:normal())*?MIN_BATHROOM/5),
+	Bedroom_size1 = round(?MIN_BEDROOM +abs(rand:normal())*?MIN_BEDROOM/5),
+	Bedroom_size2 = round(?MIN_BEDROOM +abs(rand:normal())*?MIN_BEDROOM/5),
+	Bedroom_size3 = round(?MIN_BEDROOM +abs(rand:normal())*?MIN_BEDROOM/5),
 	Livingroom_size = Area - Kitchen_size - Bathroom_size - Bedroom_size1 - Bedroom_size2 - Bedroom_size3,
 	case Livingroom_size >= ?MIN_LIVINGROOM of
 		true -> {Kitchen_size, Bathroom_size, Livingroom_size, [Bedroom_size1, Bedroom_size2, Bedroom_size3]};
