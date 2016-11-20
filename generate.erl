@@ -15,6 +15,7 @@
 -define(MIN_FLOORS_WITH_ONE_STAIR, 4).
 -define(ONE_STAIR_AREA, 100). %sq ft
 -define(LIFT_AREA, 20). %sq ft
+-define(ATTEMPTS, 10).
 
 %% unit area constrains
 -define(MAX_APPT_SIZE, 1500).
@@ -67,66 +68,111 @@ sample_floors(Area,Floors_nbr) ->
 
 
 
-generate_floor(Area) ->  generate_floor(Area,[]).
+generate_floor(Area) -> generate_floor(Area,[]).
 
 generate_floor(Area, Appts) ->
-	case Area < 2 * ?MIN_APPT_SIZE of
-		true -> [generate_appt(Area) | Appts];
-		false->
-			Appt_area = ?MIN_APPT_SIZE + rand:uniform(?MAX_APPT_SIZE - 2*?MIN_APPT_SIZE),
-			generate_floor(Area-Appt_area, [generate_appt(Appt_area) | Appts])
+	Appt_area = ?MIN_APPT_SIZE * ( abs(rand:normal()) + 1 ),			
+	if 
+		Area - Appt_area =< ?MIN_APPT_SIZE -> [generate_appt(Area) | Appts];
+		true -> generate_floor(Area-Appt_area, [generate_appt(Appt_area) | Appts])
 	end.
 
 
 
-
-generate_appt(Area) when Area < ?MIN_APPT_SIZE + ?MIN_BEDROOM -> generate_studio(Area);
-generate_appt(Area) when Area < ?MIN_APPT_SIZE + 2*?MIN_BEDROOM -> 
+generate_appt(Area) when Area =< ?MIN_APPT_SIZE + ?MIN_BEDROOM -> generate_studio(Area,?ATTEMPTS);
+generate_appt(Area) when Area =< ?MIN_APPT_SIZE + 2*?MIN_BEDROOM -> 
 	case utils:coin(0.5) of
-		true -> generate_studio(Area);
-		false-> generate_one_bd(Area)
+		true -> generate_studio(Area,?ATTEMPTS);
+		false-> generate_one_bd(Area,?ATTEMPTS)
 	end;
-generate_appt(Area) when Area < ?MIN_APPT_SIZE + 3*?MIN_BEDROOM -> 
+generate_appt(Area) when Area =< ?MIN_APPT_SIZE + 3*?MIN_BEDROOM -> 
 	case utils:coin(0.3) of
-		true -> generate_studio(Area);
+		true -> generate_studio(Area,?ATTEMPTS);
 		false-> 
 			case utils:coin(0.3) of
-				true -> generate_one_bd(Area);
-				false-> generate_two_bd(Area)
+				true -> generate_one_bd(Area,?ATTEMPTS);
+				false-> generate_two_bd(Area,?ATTEMPTS)
 			end
 	end;
 generate_appt(Area) -> 
 	case utils:coin(0.2) of
-		true -> generate_studio(Area);
+		true -> generate_studio(Area,?ATTEMPTS);
 		false-> 
 			case utils:coin(0.2) of
-				true -> generate_one_bd(Area);
+				true -> generate_one_bd(Area,?ATTEMPTS);
 				false-> 
 					case utils:coin(0.3) of
-						true -> generate_two_bd(Area);
-						false-> generate_three_bd(Area)
+						true -> generate_two_bd(Area,?ATTEMPTS);
+						false-> generate_three_bd(Area,?ATTEMPTS)
 					end
 			end
 	end.
 
 
-
-generate_studio(Area) ->
-	Kitchen_size = ?MIN_KITCHEN + abs(rand:normal())*?MIN_KITCHEN,
-	Bathroom_size = ?MIN_BATHROOM + abs(rand:normal())*?MIN_BATHROOM,
+generate_studio(Area,0) -> 
+	LR = Area - ?MIN_KITCHEN - ?MIN_BATHROOM,
+	{?MIN_KITCHEN,?MIN_BATHROOM,LR,[]};
+generate_studio(Area,N) ->
+	Kitchen_size = ?MIN_KITCHEN + abs(rand:normal())*?MIN_KITCHEN/5,
+	Bathroom_size = ?MIN_BATHROOM + abs(rand:normal())*?MIN_BATHROOM/5,
 	Livingroom_size = Area - Kitchen_size - Bathroom_size,
 	case Livingroom_size >= ?MIN_LIVINGROOM of
 		true -> {Kitchen_size, Bathroom_size, Livingroom_size, []};
-		false-> generate_studio(Area)
+		false-> 
+			io:format("failed to generate studio. Area: ~p~n",[Area]), 
+			generate_studio(Area,N-1)
 	end.
 
-generate_one_bd(Area) -> generate_studio(Area).
+generate_one_bd(Area,0) -> 
+	LR = Area - ?MIN_KITCHEN - ?MIN_BATHROOM - ?MIN_BEDROOM,
+	{?MIN_KITCHEN,?MIN_BATHROOM,LR,[?MIN_BEDROOM]};
+generate_one_bd(Area,N) ->
+	Kitchen_size = ?MIN_KITCHEN + abs(rand:normal())*?MIN_KITCHEN/5,
+	Bathroom_size = ?MIN_BATHROOM + abs(rand:normal())*?MIN_BATHROOM/5,
+	Bedroom_size = ?MIN_BEDROOM +abs(rand:normal())*?MIN_BEDROOM/5,
+	Livingroom_size = Area - Kitchen_size - Bathroom_size - Bedroom_size,
+	case Livingroom_size >= ?MIN_LIVINGROOM of
+		true -> {Kitchen_size, Bathroom_size, Livingroom_size, [Bedroom_size]};
+		false-> 
+			io:format("failed to generate 1-bd appt. Area: ~p~n",[Area]), 
+			generate_one_bd(Area,N-1)
+	end.
 
 
-generate_two_bd(Area) -> generate_studio(Area).
+generate_two_bd(Area,0) -> 
+	LR = Area - ?MIN_KITCHEN - ?MIN_BATHROOM - 2*?MIN_BEDROOM,
+	{?MIN_KITCHEN,?MIN_BATHROOM,LR,[?MIN_BEDROOM,?MIN_BEDROOM]};
+generate_two_bd(Area,N) ->
+	Kitchen_size = ?MIN_KITCHEN + abs(rand:normal())*?MIN_KITCHEN/5,
+	Bathroom_size = ?MIN_BATHROOM + abs(rand:normal())*?MIN_BATHROOM/5,
+	Bedroom_size1 = ?MIN_BEDROOM + abs(rand:normal())*?MIN_BEDROOM/5,
+	Bedroom_size2 = ?MIN_BEDROOM + abs(rand:normal())*?MIN_BEDROOM/5,
+	Livingroom_size = Area - Kitchen_size - Bathroom_size - Bedroom_size1 - Bedroom_size2,
+	case Livingroom_size >= ?MIN_LIVINGROOM of
+		true -> {Kitchen_size, Bathroom_size, Livingroom_size, [Bedroom_size1, Bedroom_size2]};
+		false-> 
+			io:format("failed to generate 2-bd appt. Area: ~p~n",[Area]), 
+			generate_two_bd(Area,N-1)
+	end.
 
 
-generate_three_bd(Area) -> generate_studio(Area).
+
+generate_three_bd(Area,0) -> 
+	LR = Area - ?MIN_KITCHEN - ?MIN_BATHROOM - 3*?MIN_BEDROOM,
+	{?MIN_KITCHEN,?MIN_BATHROOM,LR,[?MIN_BEDROOM,?MIN_BEDROOM,?MIN_BEDROOM]};
+generate_three_bd(Area,N) ->
+	Kitchen_size = ?MIN_KITCHEN + abs(rand:normal())*?MIN_KITCHEN/5,
+	Bathroom_size = ?MIN_BATHROOM + abs(rand:normal())*?MIN_BATHROOM/5,
+	Bedroom_size1 = ?MIN_BEDROOM +abs(rand:normal())*?MIN_BEDROOM/5,
+	Bedroom_size2 = ?MIN_BEDROOM +abs(rand:normal())*?MIN_BEDROOM/5,
+	Bedroom_size3 = ?MIN_BEDROOM +abs(rand:normal())*?MIN_BEDROOM/5,
+	Livingroom_size = Area - Kitchen_size - Bathroom_size - Bedroom_size1 - Bedroom_size2 - Bedroom_size3,
+	case Livingroom_size >= ?MIN_LIVINGROOM of
+		true -> {Kitchen_size, Bathroom_size, Livingroom_size, [Bedroom_size1, Bedroom_size2, Bedroom_size3]};
+		false-> 
+			io:format("failed to generate 3-bd appt. Area: ~p~n",[Area]), 
+			generate_three_bd(Area,N-1)
+	end.
 
 
 
