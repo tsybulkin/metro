@@ -71,7 +71,23 @@ get_price({Kit,Bath,LR,Bds}) when length(Bds) == 3 ->
 
 	
 
-cost(Plan) -> 0.
+cost({Lift,Area,Floors}=Plan) -> 
+	core_cost(Lift,Area,length(Floors)) + 
+	lists:sum([ appts_cost(Floor) || Floor <- Floors]).
+
+
+
+core_cost(Lift,Area,Nf) ->
+	Lift_cost = case Lift of
+		true -> ?LIFT_FIXED_COST + Nf * ?LIFT_FLOOR_COST;
+		false-> 0
+	end,
+	Stair_cost = ?STAIR_COST * Nf,
+	?FLOOR_CONSTRUCTION_COST * Nf * Area + Lift_cost + Stair_cost.
+
+
+appts_cost(Floor) -> 0.
+
 
 
 appts_proportion_fits(Floors) -> true.

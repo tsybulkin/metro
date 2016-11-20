@@ -37,7 +37,10 @@
 init_plan(X,Y) -> 
 	Floors_nbr = rand:uniform(?MAX_FLOOR_NBR),
 	Lift = sample_lift(Floors_nbr),
-	Floor_area = X*Y,
+	Floor_area = case Lift of
+		true -> X*Y - ?LIFT_AREA - ?ONE_STAIR_AREA;
+		false-> X*Y - ?ONE_STAIR_AREA
+	end,
 	{Lift, Floor_area, sample_floors(Floor_area, Floors_nbr)}.
 
 
