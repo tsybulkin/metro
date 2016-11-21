@@ -135,7 +135,7 @@ sample_floors(Area,Floors_nbr) ->
 generate_floor(Area) -> generate_floor(Area,[]).
 
 generate_floor(Area, Appts) ->
-	Appt_area = round(?MIN_APPT_SIZE * ( abs(rand:normal()) + 1 )),			
+	Appt_area = round(?MIN_APPT_SIZE * ( 2*abs(rand:normal()) + 1 )),			
 	if 
 		Area - Appt_area =< ?MIN_APPT_SIZE -> [generate_appt(Area) | Appts];
 		true -> generate_floor(Area-Appt_area, [generate_appt(Appt_area) | Appts])
@@ -153,7 +153,7 @@ generate_appt(Area) when Area =< ?MIN_APPT_SIZE + 3*?MIN_BEDROOM ->
 	case utils:coin(0.2) of
 		true -> generate_studio(Area,?ATTEMPTS);
 		false-> 
-			case utils:coin(0.5) of
+			case utils:coin(0.4) of
 				true -> generate_one_bd(Area,?ATTEMPTS);
 				false-> generate_two_bd(Area,?ATTEMPTS)
 			end
