@@ -11,10 +11,10 @@
 
 %% sale prices
 -define(NO_LIFT_PENALTY, 0.95). % per each floor starting from 2-nd
--define(STUDIO_PRICE, 920). % USD per sq ft
--define(ONE_BEDROOM_PRICE, 810).
--define(TWO_BEDROOM_PRICE, 750).
--define(THREE_BEDROOM_PRICE, 700).
+-define(STUDIO_PRICE, 620). % USD per sq ft
+-define(ONE_BEDROOM_PRICE, 620).
+-define(TWO_BEDROOM_PRICE, 560).
+-define(THREE_BEDROOM_PRICE, 550).
 
 
 
