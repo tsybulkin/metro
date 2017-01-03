@@ -8,7 +8,7 @@
 		]).
 
 %% LOT CONSTRAINS
--define(MAX_FLOOR_NBR, 9).
+-define(MAX_FLOOR_NBR, 5).
 
 %% bulding constrains
 -define(LIFT_AFTER_N_FLOOR, 4).
