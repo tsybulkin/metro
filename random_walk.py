@@ -9,7 +9,7 @@
 #	attempts is a number of attempts that will be made to find an optimal plan
 
 import numpy as np
-import building_plan
+import building_plan, finance
 
 
 
@@ -35,4 +35,19 @@ def find_bp(lot_points, rules, attempts_nbr=1000):
 def point_accepted(u2,u1):
 	if u2 - u1 >= 0.: return True
 	else: return np.exp((u1-u2)/10000)
+
+
+
+if __name__ == '__main__':
+	lot_points = [ np.array([0.,0.,0.]), 'side',
+				np.array([0.,50.,0.]), 'rear',
+				np.array([40.,50.,0.]), 'side',
+				np.array([40.,0.,0.]), 'front' ]
+	rules = ([lambda :True],
+			[lambda :True],
+			[lambda :0])
+
+	find_bp(lot_points,rules)
+
+
 
