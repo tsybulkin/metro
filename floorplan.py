@@ -15,7 +15,7 @@ class FloorPlan():
 			self.L1 = sizes[0]
 			self.L2 = sizes[1]
 		else:
-			raise "the building types except 0 are not supported"
+			raise "other building types except 0 are not supported at the moment"
 
 
 	def copy(self):

@@ -3,7 +3,7 @@
 # information as profit estimation etc.
 #
 
-
+import numpy as np
 
 def estimate_profit(bp):
-	return 0.
+	return 100000 * np.random.uniform()
