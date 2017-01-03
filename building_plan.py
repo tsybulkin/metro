@@ -4,6 +4,7 @@
 # 
 
 import numpy as np
+import floorplan
 
 
 GROUND_FLOOR_MIN_HEIGHT = 10.
@@ -52,9 +53,9 @@ class BP():
 
 		# TODO: generate other parameters of initial building plan
 		self.core = None
-		self.groundfloor = None
+		self.groundfloor = {}
 		self.storey_nbr = 1
-		self.floorplan = None
+		self.floorplan = floorplan.FloorPlan(self.building_shape ,self.sizes)
 
 
 	def generate_pos_shape(self,gen_attempts):

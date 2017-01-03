@@ -10,12 +10,15 @@ import numpy as np
 
 
 class FloorPlan():
-	def __init__(self,L1,L2):
-		self.L1 = L1
-		self.L2 = L2
+	def __init__(self,shape,sizes):
+		if shape == 0:
+			self.L1 = sizes[0]
+			self.L2 = sizes[1]
+		else:
+			raise "the building types except 0 are not supported"
 
 
 	def copy(self):
-		fp = FloorPlan(self.L1, self.L2)
+		fp = FloorPlan(0,[self.L1, self.L2])
 
 		return fp
