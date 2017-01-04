@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 
 
-def find_bp(lot_points, rules, attempts_nbr=100):
+def find_bp(lot_points, rules, attempts_nbr=30):
 	i = 0
 	bp = building_plan.BP(lot_points, rules)
 	profit = finance.estimate_profit(bp)
@@ -36,7 +36,7 @@ def find_bp(lot_points, rules, attempts_nbr=100):
 
 def point_accepted(u2,u1):
 	if u2 - u1 >= 0.: return True
-	else: return np.random.uniform() < np.exp((u2-u1)/1000)
+	else: return np.random.uniform() < np.exp((u2-u1)/10000.)
 
 
 
