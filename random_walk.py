@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 
 
-def find_bp(lot_points, rules, attempts_nbr=30):
+def find_bp(lot_points, rules, attempts_nbr=100):
 	i = 0
 	bp = building_plan.BP(lot_points, rules)
 	profit = finance.estimate_profit(bp)
@@ -45,11 +45,15 @@ if __name__ == '__main__':
 				np.array([0.,50.,0.]), 'rear',
 				np.array([40.,50.,0.]), 'side',
 				np.array([40.,0.,0.]), 'front' ]
-	rules = ([lambda :True],
-			[lambda :True],
-			[lambda :0])
+	
+	# QUESTION: view is important! Should we take into account view quality 
+	#	for each side of a given lot?
+	
+	rules = ([ZC.check_setbacks,ZC.check_height],	# ZC
+			[lambda :True],		# BC
+			[lambda :0])		# Soft rules
 
-	plans = [ p for (p,_) in find_bp(lot_points,rules) ]
+	plans = [ profit for (profit,_) in find_bp(lot_points,rules) ]
 
 	plt.plot(plans)
 	plt.show()

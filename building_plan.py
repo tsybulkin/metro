@@ -76,7 +76,7 @@ class BP():
 		
 
 		# check Zonning rules
-		if all( r() for r in self.ZC ): return True
+		if all( r(self.) for r in self.ZC ): return True
 		elif gen_attempts > 0: return generate_pos_shape(gen_attempts-1)
 		else: return False
 
@@ -90,7 +90,7 @@ class BP():
 		# refine the total height of the building
 
 		# check ZC
-		if all( r() for r in self.ZC ): return True
+		if all( r(self.L1,self.L2,self.origin,self.height) for r in self.ZC ): return True
 		elif gen_attempts > 0: return generate_type_height(gen_attempts-1)
 		else: return False
 
