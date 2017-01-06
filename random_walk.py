@@ -9,7 +9,7 @@
 #	attempts is a number of attempts that will be made to find an optimal plan
 
 import numpy as np
-import building_plan, finance
+import building_plan, finance, ZC
 import matplotlib.pyplot as plt
 
 
@@ -22,7 +22,11 @@ def find_bp(lot_points, rules, attempts_nbr=100):
 
 	while i < attempts_nbr:
 		i += 1
+		print 'round:',i
 		new_bp = bp.get_proposal()
+		if not new_bp:  
+			print "\tCannot generate new proposal..."
+			break
 		new_profit = finance.estimate_profit(new_bp)
 
 		if point_accepted(new_profit, profit):
@@ -49,14 +53,15 @@ if __name__ == '__main__':
 	# QUESTION: view is important! Should we take into account view quality 
 	#	for each side of a given lot?
 	
-	rules = ([ZC.check_setbacks,ZC.check_height],	# ZC
+	rules = ([ZC.check_setbacks, ZC.check_height],	# ZC
 			[lambda :True],		# BC
 			[lambda :0])		# Soft rules
 
-	plans = [ profit for (profit,_) in find_bp(lot_points,rules) ]
+	plans = [ (plan.origin,plan.L1,plan.L2) for (profit,plan) in find_bp(lot_points,rules) ]
+	print plans
 
-	plt.plot(plans)
-	plt.show()
+	#plt.plot(plans)
+	#plt.show()
 
 
 
