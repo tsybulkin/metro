@@ -113,8 +113,8 @@ class BP():
 	def generate_type_height(self, gen_attempts):
 		self.building_type = 0
 		# sample building height
-		self.height = GROUND_FLOOR_MIN_HEIGHT / (np.random.uniform() + 1./MAX_BUILDING_HEIGHT)
-		
+		self.height = GROUND_FLOOR_MIN_HEIGHT + STOREY_HEIGHT_MIN / (np.random.uniform() + STOREY_HEIGHT_MIN/MAX_BUILDING_HEIGHT)
+		self.height = max(self.height, GROUND_FLOOR_MIN_HEIGHT)
 		# TODO: sample ground floor height and other floors height. 
 		# refine the total height of the building
 

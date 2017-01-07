@@ -5,7 +5,7 @@
 import numpy as np
 
 
-HEIGHT_MAX = 30
+HEIGHT_MAX = 45
 SET_BACK = 5
 
 

@@ -25,7 +25,7 @@ def estimate_profit(bp):
 	print 'storey profit:', storey_profit
 	print 'storey nbr:',bp.storey_nbr
 
-	if bp.storey_nbr >= 10: return bp.storey_nbr * storey_profit - 700000
-	elif bp.storey_nbr >= 5: return bp.storey_nbr * storey_profit - 200000
+	if bp.storey_nbr >= 10: return bp.storey_nbr * storey_profit - 2000000 - 100*bp.height
+	elif bp.storey_nbr >= 5: return bp.storey_nbr * storey_profit - 220000 - 100*bp.height
 	else: return bp.storey_nbr * storey_profit
 

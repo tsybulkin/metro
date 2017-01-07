@@ -14,10 +14,9 @@ import building_plan, finance, ZC
 
 
 
-def find_bp(lot_points, rules, attempts_nbr=2000):
+def find_bp(lot_points, rules, attempts_nbr=1000):
 	i = 0
 	bp = building_plan.BP(lot_points, rules)
-	print 'bp height:', bp.height
 	profit = finance.estimate_profit(bp)
 	best_plans = [ (profit,bp) ]
 
@@ -42,7 +41,7 @@ def find_bp(lot_points, rules, attempts_nbr=2000):
 
 def point_accepted(u2,u1):
 	if u2 - u1 >= 0.: return True
-	else: return np.random.uniform() < np.exp((u2-u1)/10000.)
+	else: return np.random.uniform() < np.exp((u2-u1)/40000.)
 
 
 
@@ -61,7 +60,7 @@ if __name__ == '__main__':
 
 	plans = find_bp(lot_points,rules)
 	profit,opt = max(plans)
-	print 'Maximal profit:',profit
+	print "\nProfit exceeded: $%.3f mil" % (profit/1e6)
 	opt.show_plan()
 
 	#plt.plot(plans)
