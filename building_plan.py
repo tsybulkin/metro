@@ -103,6 +103,8 @@ class BP():
 		dy = np.random.randint(-10,10)
 		self.origin = xyz + np.array([dx,dy,0])
 		
+		# QUESTION: Should we always place the building parallel to lot front?
+		 
 
 		# check Zonning rules
 		if self.check_ZC(): return True
