@@ -28,7 +28,7 @@ class BP():
 
 		self.lot_points = lot_points
 		self.height = None
-		self.get_init_plan()
+		self.set_init_plan()
 
 
 	def copy(self):
@@ -53,23 +53,39 @@ class BP():
 
 		return bp
 
+	
+	def set_zero_plan(self):
+		self.origin = np.mean([ self.lot_points[i] 
+			for i in range(len(self.lot_points)) if i%2 == 0],axis=0)
+		self.L1 = MIN_L1
+		self.L2 = MIN_L2
+		self.height = GROUND_FLOOR_MIN_HEIGHT
+		self.storey_nbr = 1
 
-	def get_init_plan(self):
+		if self.check_ZC(): return True
+		else: 
+			print "unable to generate initial building plan for a given lot: %s" % str(self.lot_points)
+			raise 
+		
+
+
+
+	def set_init_plan(self):
 		trials = 20
 		if not self.generate_pos_size(trials):
-			print "unable to generate initial building plan for a given lot: %s" % str(self.lot_points)
-			raise
+			self.set_zero_plan()
 
 		if not self.generate_type_height(trials):
-			print "unable to generate height of the building"
-			raise
+			self.set_zero_plan()
 
+		#print 'initial height:', self.height
+		
 		# TODO: generate core for a rectangular-shaped building
 		self.core = None
 		
 		# TODO: generate ground floor and other floors
 		self.groundfloor = {}
-		self.storey_nbr = self.set_storey_nbr()
+		self.set_storey_nbr()
 		self.floorplan = floorplan.FloorPlan(self.L1 ,self.L2)
 		return True
 
@@ -97,7 +113,7 @@ class BP():
 	def generate_type_height(self, gen_attempts):
 		self.building_type = 0
 		# sample building height
-		self.height = GROUND_FLOOR_MIN_HEIGHT / (np.random.uniform() + 1/MAX_BUILDING_HEIGHT)
+		self.height = GROUND_FLOOR_MIN_HEIGHT / (np.random.uniform() + 1./MAX_BUILDING_HEIGHT)
 		
 		# TODO: sample ground floor height and other floors height. 
 		# refine the total height of the building
@@ -111,9 +127,9 @@ class BP():
 
 	def set_storey_nbr(self):
 		height_wo_groundfloor = self.height - GROUND_FLOOR_MIN_HEIGHT
-		n_max = int(height_wo_groundfloor / STOREY_HEIGHT_MIN)
+		n_max = int(height_wo_groundfloor / STOREY_HEIGHT_MIN)+1
 		n_min = int(n_max * 0.7)
-		self.storey_nbr = np.random.randint(n_min,n_max+1)
+		self.storey_nbr = np.random.randint(n_min,n_max+1)+1
 
 
 
@@ -125,22 +141,25 @@ class BP():
 		should be similar or close to Gaussian normal distribution.
 		"""
 		bp = self.copy()
-		dx = np.random.randint(-5,5)
-		dy = np.random.randint(-5,5)
+		dx = np.random.randint(-3,4)
+		dy = np.random.randint(-3,4)
 		bp.origin += np.array([dx,dy,0])
 
-		dw1 = np.random.randint(-5,5)
-		dw2 = np.random.randint(-5,5)
+		dw1 = np.random.randint(-3,4)
+		dw2 = np.random.randint(-3,4)
 		w1 = bp.L1 + dw1
 		w2 = bp.L2 + dw2
-		self.L1 = max(MIN_L1, min(MAX_L1,w1)) 
-		self.L2 = max(MIN_L2, min(MAX_L2,w2)) 
+		bp.L1 = max(MIN_L1, min(MAX_L1,w1)) 
+		bp.L2 = max(MIN_L2, min(MAX_L2,w2)) 
 
-		dh = np.random.randint(-5,5)
+		dh = np.random.randint(-5,6)
 		h = bp.height + dh
 		bp.height = max(GROUND_FLOOR_MIN_HEIGHT, h) 
+		#print 'proposal height:', bp.height
 		
-		if bp.check_ZC(): return bp
+		if bp.check_ZC(): 
+			bp.set_storey_nbr()
+			return bp
 		elif n > 0: return self.get_proposal(n-1)
 		else: return False
 	
@@ -151,4 +170,9 @@ class BP():
 			for r in self.ZC )
 
 
-
+	def show_plan(self):
+		print "**************"
+		print "Building dimensions: %i x %i   Height: %i"%(self.L1,self.L2,int(self.height))
+		print "Nbr of stories:", self.storey_nbr
+		print "**************"
+		

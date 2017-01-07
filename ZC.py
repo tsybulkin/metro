@@ -19,10 +19,7 @@ def check_setbacks(L1,L2,Oxyz,h,lot_points):
 
 
 
-def check_height(L1,L2,Oxyz,h,lot_points): 
-	print 'checking height...'
-	
-	return h <= HEIGHT_MAX
+def check_height(L1,L2,Oxyz,h,lot_points): return h <= HEIGHT_MAX
 
 
 

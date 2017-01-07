@@ -10,13 +10,14 @@
 
 import numpy as np
 import building_plan, finance, ZC
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 
 
-def find_bp(lot_points, rules, attempts_nbr=100):
+def find_bp(lot_points, rules, attempts_nbr=2000):
 	i = 0
 	bp = building_plan.BP(lot_points, rules)
+	print 'bp height:', bp.height
 	profit = finance.estimate_profit(bp)
 	best_plans = [ (profit,bp) ]
 
@@ -26,7 +27,8 @@ def find_bp(lot_points, rules, attempts_nbr=100):
 		new_bp = bp.get_proposal()
 		if not new_bp:  
 			print "\tCannot generate new proposal..."
-			break
+			new_bp = building_plan.BP(lot_points, rules)
+	
 		new_profit = finance.estimate_profit(new_bp)
 
 		if point_accepted(new_profit, profit):
@@ -57,8 +59,10 @@ if __name__ == '__main__':
 			[lambda :True],		# BC
 			[lambda :0])		# Soft rules
 
-	plans = [ (plan.origin,plan.L1,plan.L2) for (profit,plan) in find_bp(lot_points,rules) ]
-	print plans
+	plans = find_bp(lot_points,rules)
+	profit,opt = max(plans)
+	print 'Maximal profit:',profit
+	opt.show_plan()
 
 	#plt.plot(plans)
 	#plt.show()
