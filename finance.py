@@ -22,10 +22,10 @@ def estimate_profit(bp):
 	# TODO: develop a function that estimates profit as revenue(bp)-cost(bp)
 	
 	storey_profit = 100 * bp.L1 * bp.L2
-	print 'storey profit:', storey_profit
-	print 'storey nbr:',bp.storey_nbr
+	#print 'storey profit:', storey_profit
+	#print 'storey nbr:',bp.storey_nbr
 
 	if bp.storey_nbr >= 10: return bp.storey_nbr * storey_profit - 2000000 - 100*bp.height
-	elif bp.storey_nbr >= 5: return bp.storey_nbr * storey_profit - 220000 - 100*bp.height
+	elif bp.storey_nbr >= 5: return bp.storey_nbr * storey_profit - 270000 - 100*bp.height
 	else: return bp.storey_nbr * storey_profit
 

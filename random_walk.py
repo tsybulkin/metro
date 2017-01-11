@@ -10,19 +10,22 @@
 
 import numpy as np
 import building_plan, finance, ZC
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
+
+MAX_REJECTS = 25
 
 
-
-def find_bp(lot_points, rules, attempts_nbr=1000):
+def find_bp(lot_points, rules, attempts_nbr=500):
 	i = 0
 	bp = building_plan.BP(lot_points, rules)
 	profit = finance.estimate_profit(bp)
 	best_plans = [ (profit,bp) ]
 
+	rejects = 0
 	while i < attempts_nbr:
 		i += 1
-		print 'round:',i
+		if i%10 == 0: print 'round:',i
+
 		new_bp = bp.get_proposal()
 		if not new_bp:  
 			print "\tCannot generate new proposal..."
@@ -34,6 +37,15 @@ def find_bp(lot_points, rules, attempts_nbr=1000):
 			best_plans.append( (new_profit,new_bp) )
 			bp = new_bp
 			profit = new_profit
+			rejects = 0
+		else:
+			rejects += 1
+			if rejects > MAX_REJECTS:
+				print "\nNew epoch"
+				bp = building_plan.BP(lot_points, rules)
+				profit = finance.estimate_profit(bp)
+	
+
 
 	return best_plans
 
@@ -41,7 +53,7 @@ def find_bp(lot_points, rules, attempts_nbr=1000):
 
 def point_accepted(u2,u1):
 	if u2 - u1 >= 0.: return True
-	else: return np.random.uniform() < np.exp((u2-u1)/40000.)
+	else: return np.random.uniform() < np.exp((u2-u1)/5000.)
 
 
 
@@ -59,12 +71,14 @@ if __name__ == '__main__':
 			[lambda :0])		# Soft rules
 
 	plans = find_bp(lot_points,rules)
+	pr = [ p for (p,_) in plans]
+	
 	profit,opt = max(plans)
 	print "\nProfit exceeded: $%.3f mil" % (profit/1e6)
 	opt.show_plan()
 
-	#plt.plot(plans)
-	#plt.show()
+	plt.plot(pr)
+	plt.show()
 
 
 

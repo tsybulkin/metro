@@ -69,7 +69,6 @@ class BP():
 		
 
 
-
 	def set_init_plan(self):
 		trials = 20
 		if not self.generate_pos_size(trials):
@@ -78,7 +77,6 @@ class BP():
 		if not self.generate_type_height(trials):
 			self.set_zero_plan()
 
-		#print 'initial height:', self.height
 		
 		# TODO: generate core for a rectangular-shaped building
 		self.core = None
@@ -90,6 +88,7 @@ class BP():
 		return True
 
 
+	
 	def generate_pos_size(self,gen_attempts):
 		
 		# TODO: sample sizes for a given lot
@@ -104,7 +103,7 @@ class BP():
 		self.origin = xyz + np.array([dx,dy,0])
 		
 		# QUESTION: Should we always place the building parallel to lot front?
-		 
+
 
 		# check Zonning rules
 		if self.check_ZC(): return True
@@ -112,6 +111,7 @@ class BP():
 		else: return False
 
 
+	
 	def generate_type_height(self, gen_attempts):
 		self.building_type = 0
 		# sample building height
@@ -142,19 +142,24 @@ class BP():
 		that the new object will differ substantially. The distribution law
 		should be similar or close to Gaussian normal distribution.
 		"""
+		
+
+
+
+
 		bp = self.copy()
-		dx = np.random.randint(-3,4)
-		dy = np.random.randint(-3,4)
+		dx = int(round(np.random.randn()*1))
+		dy = int(round(np.random.randn()*1))
 		bp.origin += np.array([dx,dy,0])
 
-		dw1 = np.random.randint(-3,4)
-		dw2 = np.random.randint(-3,4)
+		dw1 = int(round(np.random.randn()*1))
+		dw2 = int(round(np.random.randn()*1))
 		w1 = bp.L1 + dw1
 		w2 = bp.L2 + dw2
 		bp.L1 = max(MIN_L1, min(MAX_L1,w1)) 
 		bp.L2 = max(MIN_L2, min(MAX_L2,w2)) 
 
-		dh = np.random.randint(-5,6)
+		dh = int(round(np.random.randn()*3))
 		h = bp.height + dh
 		bp.height = max(GROUND_FLOOR_MIN_HEIGHT, h) 
 		#print 'proposal height:', bp.height
