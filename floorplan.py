@@ -10,6 +10,7 @@ import numpy as np
 
 
 class FloorPlan():
+	
 	def __init__(self, L1, L2, BC, lift_optional=True):
 		self.L1 = L1
 		self.L2 = L2
@@ -17,30 +18,38 @@ class FloorPlan():
 		self.lift_optional = True
 	
 
+	
 	def gen_layout(self,n=10):
 
 		while n > 0:
-			(core,partitions) = core.sample_core(self.L1,self.L2,self.lift_optional)
-			self.core = core
-
+			(self.core, partitions) = core.sample_core(self.L1,self.L2,self.lift_optional)
+			
 			apts = []
 			for part in partitions:
-				apt = apartments.sample(part)
+				apt = apartments.sample_apt(part)
 				if apt: apts.append(apt)
 				else: 
 					n += -1
 					continue
 			self.apts = apts
 
-			if self.BC(): return True
+			if self.check_BC(): return True
 			n += -1
 
 		return False
 
 
+	
+	def check_BC(self):
+		return all( r() for r in self.BC )
 
 
+	
 	def copy(self):
 		fp = FloorPlan(self.L1, self.L2, self.BC)
-
+	
 		return fp
+
+
+
+
