@@ -141,36 +141,41 @@ class BP():
 		different from self. However, there is a likelyhood not equal to zero
 		that the new object will differ substantially. The distribution law
 		should be similar or close to Gaussian normal distribution.
-		"""
+		"""		
+		while n > 0:
+			bp = self.copy()
 		
-		bp = self.copy()
-		dx = round(np.random.randn()*1) / 2
-		dy = round(np.random.randn()*1) / 2
-		bp.origin += np.array([dx,dy,0])
+			dx = round(np.random.randn()*1) / 2
+			dy = round(np.random.randn()*1) / 2
+			bp.origin += np.array([dx,dy,0])
 
-		dw1 = int(round(np.random.randn()*1))
-		dw2 = int(round(np.random.randn()*1))
-		w1 = bp.L1 + dw1
-		w2 = bp.L2 + dw2
-		bp.L1 = max(MIN_L1, min(MAX_L1,w1)) 
-		bp.L2 = max(MIN_L2, min(MAX_L2,w2)) 
+			dw1 = int(round(np.random.randn()*1))
+			dw2 = int(round(np.random.randn()*1))
+			w1 = bp.L1 + dw1
+			w2 = bp.L2 + dw2
+			bp.L1 = max(MIN_L1, min(MAX_L1,w1)) 
+			bp.L2 = max(MIN_L2, min(MAX_L2,w2)) 
 
-		dh = int(round(np.random.randn()*3))
-		h = bp.height + dh
-		bp.height = max(GROUND_FLOOR_MIN_HEIGHT, h) 
-		#print 'proposal height:', bp.height
-		
-
-		## TODO: generate core and floor layout
-		
-
-		if bp.check_ZC(): 
-			bp.set_storey_nbr()
-			return bp
-		elif n > 0: return self.get_proposal(n-1)
-		else: return False
+			dh = int(round(np.random.randn()*3))
+			h = bp.height + dh
+			bp.height = max(GROUND_FLOOR_MIN_HEIGHT, h) 
+			
+			if bp.check_ZC(): 
+				bp.set_storey_nbr()
+				if bp.get_layout(): return bp
+				else: n += -1
+					
+		return False
 	
-		
+
+
+	def get_layout(self):
+		"""tries to generate floor layout. Returns either True or False if 
+			successful or not.
+		"""
+		# TODO:
+		return True
+
 
 	def check_ZC(self):
 		return all( r(self.L1,self.L2,self.origin,self.height, self.lot_points) 

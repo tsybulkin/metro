@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 MAX_REJECTS = 25
 
 
-def find_bp(lot_points, rules, attempts_nbr=1500):
+def find_bp(lot_points, rules, attempts_nbr=500):
 	i = 0
 	bp = building_plan.BP(lot_points, rules)
 	profit = finance.estimate_profit(bp)
@@ -24,7 +24,7 @@ def find_bp(lot_points, rules, attempts_nbr=1500):
 	rejects = 0
 	while i < attempts_nbr:
 		i += 1
-		if i%10 == 0: print 'round:',i
+		if i%100 == 0: print 'round:',i
 
 		new_bp = bp.get_proposal()
 		if not new_bp:  
