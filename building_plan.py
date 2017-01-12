@@ -84,7 +84,7 @@ class BP():
 		# TODO: generate ground floor and other floors
 		self.groundfloor = {}
 		self.set_storey_nbr()
-		self.floorplan = floorplan.FloorPlan(self.L1 ,self.L2)
+		self.floorplan = floorplan.FloorPlan(self.L1 ,self.L2, self.BC)
 		return True
 
 
@@ -173,15 +173,22 @@ class BP():
 		"""tries to generate floor layout. Returns either True or False if 
 			successful or not.
 		"""
-		# TODO:
-		return True
+		fp = floorplan.FloorPlan(self.L1, self.L2, self.BC)
+		if fp.gen_layout(): 
+			self.floor_plan = fp
+			return True
+
+		return False
 
 
+
+	
 	def check_ZC(self):
 		return all( r(self.L1,self.L2,self.origin,self.height, self.lot_points) 
 			for r in self.ZC )
 
 
+	
 	def show_plan(self):
 		print "**************"
 		print "Building dimensions: %i x %i   Height: %i"%(self.L1,self.L2,int(self.height))

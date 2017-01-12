@@ -46,7 +46,6 @@ def find_bp(lot_points, rules, attempts_nbr=500):
 				profit = finance.estimate_profit(bp)
 	
 
-
 	return best_plans
 
 
