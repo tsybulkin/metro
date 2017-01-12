@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 MAX_REJECTS = 25
 
 
-def find_bp(lot_points, rules, attempts_nbr=500):
+def find_bp(lot_points, rules, attempts_nbr=1500):
 	i = 0
 	bp = building_plan.BP(lot_points, rules)
 	profit = finance.estimate_profit(bp)
@@ -60,8 +60,8 @@ def point_accepted(u2,u1):
 if __name__ == '__main__':
 	lot_points = [ np.array([0.,0.,0.]), 'side',
 				np.array([0.,50.,0.]), 'rear',
-				np.array([40.,50.,0.]), 'side',
-				np.array([40.,0.,0.]), 'front' ]
+				np.array([41.,50.,0.]), 'side',
+				np.array([41.,0.,0.]), 'front' ]
 	
 	# QUESTION: view is important! Should we take into account view quality 
 	#	for each side of a given lot?

@@ -143,13 +143,9 @@ class BP():
 		should be similar or close to Gaussian normal distribution.
 		"""
 		
-
-
-
-
 		bp = self.copy()
-		dx = int(round(np.random.randn()*1))
-		dy = int(round(np.random.randn()*1))
+		dx = round(np.random.randn()*1) / 2
+		dy = round(np.random.randn()*1) / 2
 		bp.origin += np.array([dx,dy,0])
 
 		dw1 = int(round(np.random.randn()*1))
@@ -164,6 +160,10 @@ class BP():
 		bp.height = max(GROUND_FLOOR_MIN_HEIGHT, h) 
 		#print 'proposal height:', bp.height
 		
+
+		## TODO: generate core and floor layout
+		
+
 		if bp.check_ZC(): 
 			bp.set_storey_nbr()
 			return bp
